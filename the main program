@@ -1,0 +1,134 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.FileWriter;
+import java.util.Random;
+
+public class FreestyleRapGUI {
+
+    private static JTextArea outputArea;
+    private static JTextField nameField, keywordField;
+    private static JComboBox<String> styleBox;
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("🔥 Freestyle Rap Generator 🔥");
+        frame.setSize(500, 500);
+        frame.setLayout(new BorderLayout());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // TOP PANEL (Inputs)
+        JPanel panel = new JPanel(new GridLayout(4, 2, 8, 8));
+
+        panel.add(new JLabel("Rap Name:"));
+        nameField = new JTextField();
+        panel.add(nameField);
+
+        panel.add(new JLabel("Keyword:"));
+        keywordField = new JTextField();
+        panel.add(keywordField);
+
+        panel.add(new JLabel("Style:"));
+        styleBox = new JComboBox<>(new String[]{"Aggressive", "Chill", "Funny", "Emotional"});
+        panel.add(styleBox);
+
+        JButton generateButton = new JButton("🎤 Generate Rap");
+        panel.add(generateButton);
+
+        JButton saveButton = new JButton("💾 Save Rap");
+        panel.add(saveButton);
+
+        frame.add(panel, BorderLayout.NORTH);
+
+        // OUTPUT AREA
+        outputArea = new JTextArea();
+        outputArea.setEditable(false);
+        outputArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        frame.add(new JScrollPane(outputArea), BorderLayout.CENTER);
+
+        // BUTTON ACTIONS
+        generateButton.addActionListener(e -> generateRap());
+        saveButton.addActionListener(e -> saveRap());
+
+        frame.setVisible(true);
+    }
+
+    private static void generateRap() {
+        String name = nameField.getText().trim();
+        String keyword = keywordField.getText().trim();
+        String style = (String) styleBox.getSelectedItem();
+
+        if(name.isEmpty() || keyword.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "⚠ Please enter both Rap Name and Keyword.");
+            return;
+        }
+
+        String[] aggressive = {
+            "I'm breaking limits, nothing in my way",
+            "Power in every word, that's what I say",
+            "I'm the storm and you're just the rain",
+            "Grinding every second — victory in my vein"
+        };
+
+        String[] chill = {
+            "Moving slow like waves in the night",
+            "Peace in my words, everything feels right",
+            "Soft with the flow but still shine bright",
+            "Smooth like jazz under moonlight"
+        };
+
+        String[] funny = {
+            "Dropping bars like I drop snacks",
+            "Funny flow but still facts",
+            "Rhymes so goofy, they break syntax",
+            "Flow so weird — browser crashes max"
+        };
+
+        String[] emotional = {
+            "Pain in my rhythm but fire in my soul",
+            "Heart been broken but I’m still in control",
+            "Chasing dreams, someday I’ll be whole",
+            "Life hits hard but I won't fold"
+        };
+
+        String[][] allStyles = {aggressive, chill, funny, emotional};
+        String[] selected = allStyles[styleBox.getSelectedIndex()];
+
+        Random rand = new Random();
+        StringBuilder rap = new StringBuilder();
+
+        rap.append("👑 Rapper: ").append(name).append("\n\n");
+
+        for(int i = 0; i < 4; i++) {
+            String line = selected[rand.nextInt(selected.length)] + " — " + keyword;
+            rap.append(line).append("\n");
+        }
+
+        String[] punchlines = {
+            "Mic drop. Game over. 🔥",
+            "Remember the name — I'm the future. ⚡",
+            "No competition — I'm built different. 🚀",
+            "Say it twice — greatness echoes. 👑"
+        };
+
+        rap.append("\n💥 ").append(punchlines[rand.nextInt(punchlines.length)]);
+        
+        outputArea.setText(rap.toString());
+    }
+
+    private static void saveRap() {
+        try {
+            String rapText = outputArea.getText();
+            if(rapText.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "⚠ Generate a rap before saving!");
+                return;
+            }
+            FileWriter fw = new FileWriter("Saved_Raps.txt", true);
+            fw.write("\n\n========================\n");
+            fw.write(rapText);
+            fw.close();
+            JOptionPane.showMessageDialog(null, "📁 Rap Saved Successfully!");
+        } catch(Exception ex) {
+            JOptionPane.showMessageDialog(null, "❌ Error saving rap.");
+        }
+    }
+}
